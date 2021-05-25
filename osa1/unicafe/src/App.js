@@ -32,24 +32,26 @@ const Statistics = ({ goodCount, neutralCount, badCount }) => {
 
   return (
     <div>
-      <div>
-        <h1>statistics</h1>
-      </div>
-      <StatisticLine text="good" value={goodCount} />
-      <StatisticLine text="neutral" value={neutralCount} />
-      <StatisticLine text="bad" value={badCount} />
-      <StatisticLine text="all" value={sum} />
-      <StatisticLine text="average" value={(goodCount - badCount) / (sum)} />
-      <StatisticLine text="positive" value={goodCount / (sum) + " %"} />
+      <h1>statistics</h1>
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={goodCount} />
+          <StatisticLine text="neutral" value={neutralCount} />
+          <StatisticLine text="bad" value={badCount} />
+          <StatisticLine text="all" value={sum} />
+          <StatisticLine text="average" value={(goodCount - badCount) / (sum)} />
+          <StatisticLine text="positive" value={goodCount / (sum) + " %"} />
+        </tbody>
+      </table>
     </div>
   )
 }
 
-const StatisticLine = ({ text, value }) => (
-  <div>
-    <p> {text} {value} </p>
-  </div>
-)
+const StatisticLine = ({ text, value }) => {
+  return (
+    <tr><td>{text}</td><td>{value}</td></tr>
+  )
+}
 
 const Button = ({ handleClick, text }) => {
   return (
