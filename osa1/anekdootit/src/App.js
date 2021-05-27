@@ -11,31 +11,36 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(Random)
+  const [mostVotesIndex, setMostVotes] = useState(Random)
   const [points, setPoints] = useState(Array(6).fill(0))
 
   const HandleClick = () => {
+    MostVotes()
     const copy = {
       ...points,
-      points,[selected]: points[selected] + 1
+      points, [selected]: points[selected] + 1
     }
     setPoints(copy)
   }
 
+  const MostVotes = () => { if (points[selected] + 1 > points[mostVotesIndex]) setMostVotes(selected) }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]} <br></br>
       has {points[selected]} votes <br></br>
       <button onClick={() => setSelected(Random)}>
         next anecdote
       </button>
-      <button onClick={() => HandleClick({points}, {setPoints}, {selected})}>
+      <button onClick={HandleClick}>
         vote
       </button>
+      <h1>Anecdote with the most votes</h1>
+      {anecdotes[mostVotesIndex]}
     </div>
   )
 }
-
-
 
 const Random = () => { return Math.floor(Math.random() * 6) }
 
