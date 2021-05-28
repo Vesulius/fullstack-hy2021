@@ -22,7 +22,7 @@ const App = () => {
     }
     setPoints(copy)
   }
-
+  
   const MostVotes = () => { if (points[selected] + 1 > points[mostVotesIndex]) setMostVotes(selected) }
 
   return (
