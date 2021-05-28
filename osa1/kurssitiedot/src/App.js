@@ -30,6 +30,7 @@ const Course = ({ course }) => {
     <div>
       <Header course={course} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
@@ -47,7 +48,7 @@ const Header = ({ course }) => {
 const Content = ({ parts }) => {
   return (
     <div>
-      {parts.map(part => 
+      {parts.map(part =>
         <Part key={part.name} name={part.name} exercises={part.exercises} />
       )}
     </div>
@@ -64,14 +65,14 @@ const Part = ({ name, exercises }) => {
   )
 }
 
-// const Total = ({ parts }) => {
-//   return (
-//     <div>
-//       <p>
-//         Number of exercises {parts.reduce((sum, part) => { return sum + part.exercises}, 0)}
-//       </p>
-//     </div>
-//   )
-// }
+const Total = ({ parts }) => {
+  return (
+    <div>
+      <p><b>
+        total of {parts.reduce((sum, part) => { return sum + part.exercises }, 0)} exercises
+      </b></p>
+    </div>
+  )
+}
 
 export default App
