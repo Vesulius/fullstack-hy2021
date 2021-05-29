@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Course from './components/Course'
 
 const App = () => {
   const courses = [
@@ -28,7 +28,7 @@ const App = () => {
           id: 4
         }
       ]
-    }, 
+    },
     {
       name: 'Node.js',
       id: 2,
@@ -48,58 +48,11 @@ const App = () => {
   ]
 
   return (
-    courses.map(course => 
-      <Course key={course.name} course={course} />
-    )
-  )
-}
-
-const Course = ({ course }) => {
-  return (
     <div>
-      <Header course={course} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </div>
-  )
-}
-
-const Header = ({ course }) => {
-  return (
-    <div>
-      <h1>
-        {course.name}
-      </h1>
-    </div>
-  )
-}
-
-const Content = ({ parts }) => {
-  return (
-    <div>
-      {parts.map(part =>
-        <Part key={part.name} name={part.name} exercises={part.exercises} />
+      <h1>Web development curriculum</h1>
+      {courses.map(course =>
+        <Course key={course.id} course={course} />
       )}
-    </div>
-  )
-}
-
-const Part = ({ name, exercises }) => {
-  return (
-    <div>
-      <p>
-        {name} {exercises}
-      </p>
-    </div>
-  )
-}
-
-const Total = ({ parts }) => {
-  return (
-    <div>
-      <p><b>
-        total of {parts.reduce((sum, part) => { return sum + part.exercises }, 0)} exercises
-      </b></p>
     </div>
   )
 }
