@@ -2,13 +2,18 @@ import React, { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    {
+      name: 'Arto Hellas',
+      number: '012 3456789'
+    }
   ])
-  const [newName, setNewName] = useState('')
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+
+  const handleNameChange = (event) => setNewName(event.target.value)
+  const handleNumberChange = (event) => setNewNumber(event.target.value)
+  
 
   const addNote = (event) => {
     event.preventDefault()
@@ -18,32 +23,54 @@ const App = () => {
     }
     const newPerson = {
       name: newName,
-      id: newName
+      number: newNumber,
+      id: persons.length + 1
     }
     setPersons(persons.concat(newPerson))
     setNewName('')
+    setNewNumber('')
+  }
+
+  const Form = () => {
+    return (
+      <form onSubmit={addNote}>
+        <Field name={'name'} value={newName} changeHandler={handleNameChange} />
+        <Field name={'number'} value={newNumber} changeHandler={handleNumberChange} />
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    )
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addNote}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      {/* käytin tätä ({Form()}) muotoa funkiton kutsusta sillä tavallinen <Form /> lopetti inputin focusin
+      eli yhden kirjaimen jälkeen ei voinut kirjoittaa enempää klikkaamatta kenttää uudestaan  */}
+      {Form()}
       <h2>Numbers</h2>
-      <div>
-        {persons.map(person =>
-          <p key={person.name}> {person.name} </p>
-        )}
-      </div>
+      <Persons persons={persons} />
     </div>
   )
+}
 
+const Persons = ({ persons }) => {
+  return (
+    <div>
+      {persons.map(person =>
+        <p key={person.name}> {person.name} {person.number} </p>
+      )}
+    </div>
+  )
+}
+
+const Field = ({ name, value, changeHandler }) => {
+  return (
+    <div>
+      {name}: <input value={value} onChange={changeHandler} />
+    </div>
+  )
 }
 
 export default App
