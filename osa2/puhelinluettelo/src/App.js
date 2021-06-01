@@ -2,18 +2,23 @@ import React, { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: '012 3456789'
-    }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchWord, setSearchWord] = useState('')
+  const [shownPersons, setShownPersons] = useState(persons)
 
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
-  
+  const handleSearchChange = (event) => {
+    setSearchWord(event.target.value)
+    // tämänhetkinen hakusanan arvo on välitettävä filterille propsien kautta sillä searchword ei ole vielä päivitetty
+    filter(event.target.value)
+  }
 
   const addNote = (event) => {
     event.preventDefault()
@@ -43,27 +48,34 @@ const App = () => {
     )
   }
 
+  const List = () => {
+    return (
+      <div>
+        {shownPersons.map(person =>
+          <p key={person.name}> {person.name} {person.number} </p>
+        )}
+      </div>
+    )
+  }
+
+
+  const filter = (search) => setShownPersons(persons.filter(person => person.name.match(search)))
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Field name={'filter shown with'} value={searchWord} changeHandler={handleSearchChange} />
       {/* käytin tätä ({Form()}) muotoa funkiton kutsusta sillä tavallinen <Form /> lopetti inputin focusin
       eli yhden kirjaimen jälkeen ei voinut kirjoittaa enempää klikkaamatta kenttää uudestaan  */}
+      <h2>add a new</h2>
       {Form()}
       <h2>Numbers</h2>
-      <Persons persons={persons} />
+      <List foundPersons={shownPersons} />
     </div>
   )
 }
 
-const Persons = ({ persons }) => {
-  return (
-    <div>
-      {persons.map(person =>
-        <p key={person.name}> {person.name} {person.number} </p>
-      )}
-    </div>
-  )
-}
+
 
 const Field = ({ name, value, changeHandler }) => {
   return (
