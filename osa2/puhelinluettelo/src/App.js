@@ -17,7 +17,7 @@ const App = () => {
   const handleSearchChange = (event) => {
     setSearchWord(event.target.value)
     // tämänhetkinen hakusanan arvo on välitettävä filterille propsien kautta sillä searchword ei ole vielä päivitetty
-    filter(event.target.value)
+    filter(event.target.value, setShownPersons, persons)
   }
 
   const addNote = (event) => {
@@ -58,9 +58,6 @@ const App = () => {
     )
   }
 
-
-  const filter = (search) => setShownPersons(persons.filter(person => person.name.match(search)))
-
   return (
     <div>
       <h2>Phonebook</h2>
@@ -75,7 +72,7 @@ const App = () => {
   )
 }
 
-
+const filter = (search, setShownPersons, persons) => setShownPersons(persons.filter(person => person.name.match(search)))
 
 const Field = ({ name, value, changeHandler }) => {
   return (
