@@ -6,7 +6,6 @@ const App = () => {
   const [foundCountries, setFoundCountries] = useState([])
   const [search, setSearch] = useState('')
 
-
   useEffect(() => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
@@ -15,14 +14,20 @@ const App = () => {
       })
   }, [])
 
-
-
   const handleSearchChange = (event) => {
     setSearch(event.target.value)
-    setFoundCountries(countries.filter(country => country.name.match(event.target.value)))
+    setFoundCountries(countries.filter(country => country.name.toLowerCase().match(event.target.value.toLowerCase())))
   }
 
-  const List = () => {
+  const handleClick = (country) => {
+    const copy = {
+      ...country,
+      key: country.name
+    }
+    setFoundCountries([copy])
+  }
+
+  const Results = () => {
     if (foundCountries.length > 10) {
       return <p>Too many matches, specify another filter</p>
     } else if (foundCountries.length === 1) {
@@ -31,7 +36,14 @@ const App = () => {
 
     return (
       foundCountries.map(country => {
-        return <p key={country.name}> {country.name}</p>
+        return (
+          <div key={country.name}>
+            <p> 
+              {country.name}
+              <button onClick={() => handleClick(country)}> show </button>
+            </p>
+          </div>
+        )
       })
     )
   }
@@ -39,7 +51,7 @@ const App = () => {
   return (
     <div>
       find countries <input value={search} onChange={handleSearchChange} />
-      <List />
+      <Results />
     </div>
 
   )
