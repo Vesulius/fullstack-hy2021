@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const App = () => {
+  const baseUrl = 'http://localhost:3001/persons'
+
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -18,7 +20,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/persons')
+      .get(baseUrl)
       .then(response => {
         setPersons(response.data)
       })
@@ -33,8 +35,14 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     }
+
+    axios
+      .post(baseUrl, newPerson)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+      })
+
     setPersons(persons.concat(newPerson))
     setNewName('')
     setNewNumber('')
