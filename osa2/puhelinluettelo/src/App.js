@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from 'react'
-import persons from './services/persons'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchWord, setSearchWord] = useState('')
-  const [shownPersons, setShownPersons] = useState(persons)
+  const [foundPersons, setFoundPersons] = useState(persons)
 
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
   const handleSearchChange = (event) => {
     setSearchWord(event.target.value)
     // tämänhetkinen hakusanan arvo on välitettävä filterille propsien kautta sillä searchword ei ole vielä päivitetty
-    filter(event.target.value, setShownPersons, persons)
+    setFoundPersons(filter(event.target.value, persons))
   }
 
   useEffect(() => {
-    persons
+    personService
       .getAll()
       .then(persons => {
         setPersons(persons)
       })
   }, [])
 
-  const addNote = (event) => {
+  const addPerson = (event) => {
     event.preventDefault()
     if (persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
@@ -35,7 +35,7 @@ const App = () => {
       number: newNumber,
     }
 
-    persons
+    personService
       .add(newPerson)
       .then(person => {
         setPersons(persons.concat(person))
@@ -46,9 +46,16 @@ const App = () => {
     setNewNumber('')
   }
 
+  const removePerson = (id) => {
+    if (window.confirm(`Delete ${foundPersons.find(person => person.id === id).name}`)) {
+      personService.remove(id)
+      setFoundPersons(foundPersons.filter(person => person.id !== id))
+    }
+  }
+
   const Form = () => {
     return (
-      <form onSubmit={addNote}>
+      <form onSubmit={addPerson}>
         <Field name={'name'} value={newName} changeHandler={handleNameChange} />
         <Field name={'number'} value={newNumber} changeHandler={handleNumberChange} />
         <div>
@@ -58,32 +65,29 @@ const App = () => {
     )
   }
 
-  const List = () => {
-    return (
-      <div>
-        {shownPersons.map(person =>
-          <p key={person.name}> {person.name} {person.number} </p>
-        )}
-      </div>
-    )
-  }
-
-
   return (
     <div>
       <h2>Phonebook</h2>
       <Field name={'filter shown with'} value={searchWord} changeHandler={handleSearchChange} />
-      {/* käytin tätä ({Form()}) muotoa funkiton kutsusta sillä tavallinen <Form /> lopetti inputin focusin
-      eli yhden kirjaimen jälkeen ei voinut kirjoittaa enempää klikkaamatta kenttää uudestaan  */}
       <h2>add a new</h2>
+      {/* Muotoa {Form()} käytetty funkiton kutsussa sillä muoto <Form /> lopetti inputin focusin
+      eli yhden kirjaimen jälkeen ei voinut kirjoittaa enempää klikkaamatta kenttää uudestaan  */}
       {Form()}
       <h2>Numbers</h2>
-      <List foundPersons={shownPersons} />
+      <List foundPersons={foundPersons} removePerson={removePerson} />
     </div>
   )
 }
 
-const filter = (search, setShownPersons, persons) => setShownPersons(persons.filter(person => person.name.match(search)))
+const List = ({ foundPersons, removePerson }) => {
+  return (
+    <div>
+      {foundPersons.map(person =>
+        <div key={person.id}>{person.name} {person.number} <button onClick={() => removePerson(person.id)}> delete </button></div>
+      )}
+    </div>
+  )
+}
 
 const Field = ({ name, value, changeHandler }) => {
   return (
@@ -92,5 +96,7 @@ const Field = ({ name, value, changeHandler }) => {
     </div>
   )
 }
+
+const filter = (search, persons) => {return persons.filter(person => person.name.match(search))}
 
 export default App
