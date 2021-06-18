@@ -13,7 +13,7 @@ const App = () => {
   const handleSearchChange = (event) => {
     setSearchWord(event.target.value)
     // tämänhetkinen hakusanan arvo on välitettävä filterille propsien kautta sillä searchword ei ole vielä päivitetty
-    setFoundPersons(filter(event.target.value, persons))
+    setFoundPersons(Find(event.target.value, persons))
   }
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      updateNumber()
       return
     }
     const newPerson = {
@@ -39,9 +39,9 @@ const App = () => {
       .add(newPerson)
       .then(person => {
         setPersons(persons.concat(person))
+        // uusi henkilö tulee tässäkin lisätä listaan persons sillä todellista listaa ei olla vielä päivitetty
+        setFoundPersons(Find(searchWord, persons.concat(person)))
       })
-
-    setPersons(persons.concat(newPerson))
     setNewName('')
     setNewNumber('')
   }
@@ -49,7 +49,25 @@ const App = () => {
   const removePerson = (id) => {
     if (window.confirm(`Delete ${foundPersons.find(person => person.id === id).name}`)) {
       personService.remove(id)
+      setPersons(persons.filter(person => person.id !== id))
       setFoundPersons(foundPersons.filter(person => person.id !== id))
+    }
+  }
+
+  const updateNumber = () => {
+    if (window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+      }
+      personService
+        .update((persons.find(person => newName === person.name).id), newPerson)
+        .then(returnedPerson => {
+          const copy = persons.map(person => person.name === returnedPerson.data.name ? returnedPerson.data : person)
+          setPersons(copy)
+          setFoundPersons(Find(searchWord, copy))
+        })
+
     }
   }
 
@@ -83,7 +101,7 @@ const List = ({ foundPersons, removePerson }) => {
   return (
     <div>
       {foundPersons.map(person =>
-        <div key={person.id}>{person.name} {person.number} <button onClick={() => removePerson(person.id)}> delete </button></div>
+        <div key={person.id}> {person.name} {person.number} <button onClick={() => removePerson(person.id)}> delete </button></div>
       )}
     </div>
   )
@@ -97,6 +115,6 @@ const Field = ({ name, value, changeHandler }) => {
   )
 }
 
-const filter = (search, persons) => {return persons.filter(person => person.name.match(search))}
+const Find = (search, persons) => { return persons.filter(person => person.name.match(search)) }
 
 export default App

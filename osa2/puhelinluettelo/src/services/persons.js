@@ -6,19 +6,23 @@ const getAll = () => {
 }
 
 const add = newPerson => {
-    return axios.post(baseUrl, newPerson).then(response => response.data)
+    return axios.post(baseUrl, newPerson).then(response => response.data) 
 }
 
 const remove = (id) => {
-    console.log(`persons: `, id);
     return axios.delete(`${baseUrl}/${id}`).then(response => response)
+}
+
+const update = (id, newPerson) => {
+    return axios.put(`${baseUrl}/${id}`, newPerson).then(response => response)
 }
 
 // Tämä moduuli voitaisiin exportata suoraa mutta silloin react varoittaa: Assign object to a variable before exporting as module default import/no-anonymous-default-export
 const personService = {
     getAll,
     add,
-    remove
+    remove,
+    update
 }
 
 export default personService
