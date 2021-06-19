@@ -7,6 +7,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchWord, setSearchWord] = useState('')
   const [foundPersons, setFoundPersons] = useState(persons)
+  const [message, setMessage] = useState(null)
 
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
@@ -41,14 +42,23 @@ const App = () => {
         setPersons(persons.concat(person))
         // uusi henkilö tulee tässäkin lisätä listaan persons sillä todellista listaa ei olla vielä päivitetty
         setFoundPersons(Find(searchWord, persons.concat(person)))
+        updateMessage(`Added ${newPerson.name}`)
       })
+      .catch(error => {
+        updateMessage(`Couldn't add ${newPerson.name}`)
+      })
+
     setNewName('')
     setNewNumber('')
   }
 
   const removePerson = (id) => {
-    if (window.confirm(`Delete ${foundPersons.find(person => person.id === id).name}`)) {
+    const removedName = foundPersons.find(person => person.id === id).name
+    if (window.confirm(`Delete ${removedName}`)) {
       personService.remove(id)
+        .then(returnData => {
+          updateMessage(`Deleted ${removedName}`)
+        })
       setPersons(persons.filter(person => person.id !== id))
       setFoundPersons(foundPersons.filter(person => person.id !== id))
     }
@@ -66,8 +76,10 @@ const App = () => {
           const copy = persons.map(person => person.name === returnedPerson.data.name ? returnedPerson.data : person)
           setPersons(copy)
           setFoundPersons(Find(searchWord, copy))
+          updateMessage(`Updated number of ${newPerson.name}`)
         })
-
+      setNewName('')
+      setNewNumber('')
     }
   }
 
@@ -83,9 +95,17 @@ const App = () => {
     )
   }
 
+  const updateMessage = (message) => {
+    setMessage(message)
+    setTimeout(() => {
+      setMessage(null)
+    }, 3000)
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Field name={'filter shown with'} value={searchWord} changeHandler={handleSearchChange} />
       <h2>add a new</h2>
       {/* Muotoa {Form()} käytetty funkiton kutsussa sillä muoto <Form /> lopetti inputin focusin
@@ -111,6 +131,25 @@ const Field = ({ name, value, changeHandler }) => {
   return (
     <div>
       {name}: <input value={value} onChange={changeHandler} />
+    </div>
+  )
+}
+
+const Notification = ({ message }) => {
+  const messageStyle = {
+    color: 'green',
+    backround: 'lightgrey',
+    borderStyle: 'solid',
+    padding: 10,
+    fontStyle: 'bold',
+    fontSize: 20
+  }
+  if (message === null) {
+    return null
+  }
+  return (
+    <div style={messageStyle}>
+      {message}
     </div>
   )
 }
