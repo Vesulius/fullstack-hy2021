@@ -18,16 +18,14 @@ const App = () => {
   }
 
   useEffect(() => {
-    personService
-      .getAll()
-      .then(persons => {
-        setPersons(persons)
-      })
+    personService.getAll().then((persons) => {
+      setPersons(persons)
+    })
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.find(person => person.name === newName)) {
+    if (persons.find((person) => person.name === newName)) {
       updateNumber()
       return
     }
@@ -38,14 +36,14 @@ const App = () => {
 
     personService
       .add(newPerson)
-      .then(person => {
+      .then((person) => {
         setPersons(persons.concat(person))
         // uusi henkilö tulee tässäkin lisätä listaan persons sillä todellista listaa ei olla vielä päivitetty
         setFoundPersons(Find(searchWord, persons.concat(person)))
-        updateMessage(`Added ${newPerson.name}`)
+        updateMessage(setMessage, `Added ${newPerson.name}`, false)
       })
-      .catch(error => {
-        updateMessage(`Couldn't add ${newPerson.name}`)
+      .catch((error) => {
+        updateMessage(setMessage, `Couldn't add ${newPerson.name}`, true)
       })
 
     setNewName('')
@@ -53,41 +51,56 @@ const App = () => {
   }
 
   const removePerson = (id) => {
-    const removedName = foundPersons.find(person => person.id === id).name
+    const removedName = foundPersons.find((person) => person.id === id).name
     if (window.confirm(`Delete ${removedName}`)) {
-      personService.remove(id)
-        .then(returnData => {
-          updateMessage(`Deleted ${removedName}`)
+      personService
+        .remove(id)
+        .then((returnData) => {
+          updateMessage(setMessage, `Deleted ${removedName}`, false)
         })
-      setPersons(persons.filter(person => person.id !== id))
-      setFoundPersons(foundPersons.filter(person => person.id !== id))
+        .catch((error) => {
+          updateMessage(
+            setMessage,
+            `Information of  ${removedName} has already been removed from server`,
+            true
+          )
+        })
+      setPersons(persons.filter((person) => person.id !== id))
+      setFoundPersons(foundPersons.filter((person) => person.id !== id))
     }
   }
 
   const updateNumber = () => {
-    if (window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) {
-      const newPerson = {
-        name: newName,
-        number: newNumber,
-      }
-      personService
-        .update((persons.find(person => newName === person.name).id), newPerson)
-        .then(returnedPerson => {
-          const copy = persons.map(person => person.name === returnedPerson.data.name ? returnedPerson.data : person)
-          setPersons(copy)
-          setFoundPersons(Find(searchWord, copy))
-          updateMessage(`Updated number of ${newPerson.name}`)
-        })
-      setNewName('')
-      setNewNumber('')
+    if (!window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) return
+    const newPerson = {
+      name: newName,
+      number: newNumber,
     }
+    personService
+      .update(persons.find((person) => newName === person.name).id, newPerson)
+      .then((returnedPerson) => {
+        const copy = persons.map((person) =>
+          person.name === returnedPerson.data.name
+            ? returnedPerson.data
+            : person
+        )
+        setPersons(copy)
+        setFoundPersons(Find(searchWord, copy))
+        updateMessage(setMessage, `Updated number of ${newPerson.name}`, false)
+      })
+    setNewName('')
+    setNewNumber('')
   }
 
   const Form = () => {
     return (
       <form onSubmit={addPerson}>
         <Field name={'name'} value={newName} changeHandler={handleNameChange} />
-        <Field name={'number'} value={newNumber} changeHandler={handleNumberChange} />
+        <Field
+          name={'number'}
+          value={newNumber}
+          changeHandler={handleNumberChange}
+        />
         <div>
           <button type="submit">add</button>
         </div>
@@ -95,18 +108,15 @@ const App = () => {
     )
   }
 
-  const updateMessage = (message) => {
-    setMessage(message)
-    setTimeout(() => {
-      setMessage(null)
-    }, 3000)
-  }
-
   return (
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
-      <Field name={'filter shown with'} value={searchWord} changeHandler={handleSearchChange} />
+      <Field
+        name={'filter shown with'}
+        value={searchWord}
+        changeHandler={handleSearchChange}
+      />
       <h2>add a new</h2>
       {/* Muotoa {Form()} käytetty funkiton kutsussa sillä muoto <Form /> lopetti inputin focusin
       eli yhden kirjaimen jälkeen ei voinut kirjoittaa enempää klikkaamatta kenttää uudestaan  */}
@@ -117,12 +127,24 @@ const App = () => {
   )
 }
 
+const updateMessage = (setMessage, text, error) => {
+  const newMessage = [text, error]
+  setMessage(newMessage)
+  setTimeout(() => {
+    setMessage(null)
+  }, 4000)
+}
+
 const List = ({ foundPersons, removePerson }) => {
   return (
     <div>
-      {foundPersons.map(person =>
-        <div key={person.id}> {person.name} {person.number} <button onClick={() => removePerson(person.id)}> delete </button></div>
-      )}
+      {foundPersons.map((person) => (
+        <div key={person.id}>
+          {' '}
+          {person.name} {person.number}{' '}
+          <button onClick={() => removePerson(person.id)}> delete </button>
+        </div>
+      ))}
     </div>
   )
 }
@@ -135,25 +157,35 @@ const Field = ({ name, value, changeHandler }) => {
   )
 }
 
-const Notification = ({ message }) => {
-  const messageStyle = {
-    color: 'green',
-    backround: 'lightgrey',
-    borderStyle: 'solid',
-    padding: 10,
-    fontStyle: 'bold',
-    fontSize: 20
-  }
-  if (message === null) {
-    return null
-  }
-  return (
-    <div style={messageStyle}>
-      {message}
-    </div>
-  )
+const positiveMessageStyle = {
+  color: 'green',
+  backround: 'lightgrey',
+  borderStyle: 'solid',
+  padding: 10,
+  fontStyle: 'cursive',
+  fontSize: 20,
+}
+const negativeMessageStyle = {
+  color: 'red',
+  backround: 'lightgrey',
+  borderStyle: 'solid',
+  padding: 10,
+  fontStyle: 'bold',
+  fontSize: 20,
 }
 
-const Find = (search, persons) => { return persons.filter(person => person.name.match(search)) }
+const Notification = (message) => {
+  if (message.message === null) {
+    return null
+  }
+  if (!message.message[1]) {
+    return <div style={positiveMessageStyle}>{message.message[0]}</div>
+  }
+  return <div style={negativeMessageStyle}>{message.message[0]}</div>
+}
+
+const Find = (search, persons) => {
+  return persons.filter((person) => person.name.match(search))
+}
 
 export default App
