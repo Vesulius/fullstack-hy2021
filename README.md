@@ -4,7 +4,7 @@ Tämä on *Helsingin yliopiston* kurssin *Full Stack* tehtävien palautusreposit
 
 #### Palautusten rakenne
 
-Kaikki kurssin tehtävät löytyvät tästä repositorista. Jokaiselle osalle tehdään oma kansio joka nimetään osan mukaan.
+Kaikki kurssin tehtävät löytyvät tästä repositorista tai ovat linkitetty omiin repositoreihin. Jokaiselle osalle tehdään oma kansio joka nimetään osan mukaan.
 
 Tehtäväsarjat ovat tallennettuna osiinsa joissa ne aloitettiin huolimatta siitä että niitä on saatettu jatkaa seuraavien osien tehävissä. Jokaisella yksittäisellä tehtävällä on oma kommitti.
 

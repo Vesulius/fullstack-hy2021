@@ -1,0 +1,1 @@
+Tässä linkki osan 3 repoon: https://github.com/Vesulius/fullstack-hy2021-osa3
