@@ -42,8 +42,8 @@ const App = () => {
         setFoundPersons(Find(searchWord, persons.concat(person)))
         updateMessage(setMessage, `Added ${newPerson.name}`, false)
       })
-      .catch((error) => {
-        updateMessage(setMessage, `Couldn't add ${newPerson.name}`, true)
+      .catch(error => {
+        updateMessage(setMessage, error.response.data.error, true)
       })
 
     setNewName('')
