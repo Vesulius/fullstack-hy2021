@@ -29,9 +29,9 @@ const newBlog = {
 }
 
 const blogWithoutLikes = {
-  title: 'First class tests',
-  author: 'Robert C. Martin',
-  url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+  title: 'Test blog without likes',
+  author: 'Tester',
+  url: 'https://static6.depositphotos.com/1155356/659/i/950/depositphotos_6596878-stock-photo-construction-worker-with-ladder.jpg',
 }
 
 const blogsInDb = async () => {
@@ -42,5 +42,6 @@ const blogsInDb = async () => {
 module.exports = {
   initialBlogs,
   newBlog,
+  blogWithoutLikes,
   blogsInDb
 }

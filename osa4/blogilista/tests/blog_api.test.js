@@ -37,10 +37,18 @@ test('posting note adds it to db', async () => {
   expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
 
   const allTitles = allBlogs.map(b => b.title)
-  expect(allTitles).toContainEqual('First class tests')
+  expect(allTitles).toContain('First class tests')
 })
 
-
+test('posting blog without likes values gives blog zero likes', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.blogWithoutLikes)
+    .expect(201)
+  const allBlogs = await helper.blogsInDb()
+  const postedBlog = allBlogs.find(b => b.title === 'Test blog without likes')
+  expect(postedBlog.likes).toBe(0)
+})
 
 afterAll(() => {
   mongoose.connection.close()
