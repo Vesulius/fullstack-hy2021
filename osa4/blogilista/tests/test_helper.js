@@ -34,6 +34,10 @@ const blogWithoutLikes = {
   url: 'https://static6.depositphotos.com/1155356/659/i/950/depositphotos_6596878-stock-photo-construction-worker-with-ladder.jpg',
 }
 
+const blogWithoutTitleAndUrl = {
+  author: 'Im no writer'
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(b => b.toJSON())
@@ -43,5 +47,6 @@ module.exports = {
   initialBlogs,
   newBlog,
   blogWithoutLikes,
+  blogWithoutTitleAndUrl,
   blogsInDb
 }
