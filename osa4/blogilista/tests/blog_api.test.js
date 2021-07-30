@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
+const blog = require('../models/blog')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 
@@ -21,10 +22,25 @@ test('all blogs are returned as json', async () => {
 })
 
 test('blog id is named id not _id', async () => {
-  const response = await api
-    .get('/api/blogs')
+  const response = await api.get('/api/blogs')
+
   expect(response.body[0].id).toBeDefined()
 })
+
+test('posting note adds it to db', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.newBlog)
+    .expect(201)
+
+  const allBlogs = await helper.blogsInDb()
+  expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
+
+  const allTitles = allBlogs.map(b => b.title)
+  expect(allTitles).toContainEqual('First class tests')
+})
+
+
 
 afterAll(() => {
   mongoose.connection.close()
