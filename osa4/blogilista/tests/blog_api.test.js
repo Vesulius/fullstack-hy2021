@@ -64,6 +64,22 @@ describe('posting blogs', () => {
   })
 })
 
+describe('deleting blogs', () => {
+  test('valid id deltes blog with code 204', async () => {
+    const allBlogsAtStart = await helper.blogsInDb()
+    const toBeDeletedId = allBlogsAtStart[0].id
+    await api
+      .delete(`/api/blogs/${toBeDeletedId}`)
+      .expect(204)
+
+    const allBlogsAtEnd = await helper.blogsInDb()
+    expect(allBlogsAtEnd).toHaveLength(allBlogsAtStart.length - 1)
+
+    const deletedBlog = allBlogsAtEnd.find(b => b.id === toBeDeletedId)
+    expect(deletedBlog).toEqual(undefined)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
