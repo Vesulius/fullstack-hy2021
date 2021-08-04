@@ -80,6 +80,26 @@ describe('deleting blogs', () => {
   })
 })
 
+describe('editing blogs', () => {
+  test('editing likes changes its value', async () => {
+    const allBlogsAtStart = await helper.blogsInDb()
+    const blogToBeEdited = allBlogsAtStart[0]
+    const editedBlog = {
+      title: blogToBeEdited.title,
+      author: blogToBeEdited.author,
+      url: blogToBeEdited.url,
+      likes: blogToBeEdited.likes + 1
+    }
+    await api
+      .put(`/api/blogs/${blogToBeEdited.id}`)
+      .send(editedBlog)
+     
+    const allBlogsAtEnd = await helper.blogsInDb()
+    const editedBlogAtEnd = allBlogsAtEnd.find(b => b.id = blogToBeEdited.id)
+    expect(editedBlogAtEnd.likes).toBe(editedBlog.likes)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
