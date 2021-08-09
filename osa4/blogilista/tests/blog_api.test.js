@@ -93,7 +93,7 @@ describe('editing blogs', () => {
     await api
       .put(`/api/blogs/${blogToBeEdited.id}`)
       .send(editedBlog)
-     
+
     const allBlogsAtEnd = await helper.blogsInDb()
     const editedBlogAtEnd = allBlogsAtEnd.find(b => b.id = blogToBeEdited.id)
     expect(editedBlogAtEnd.likes).toBe(editedBlog.likes)
