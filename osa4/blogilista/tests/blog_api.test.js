@@ -5,6 +5,7 @@ const Blog = require('../models/blog')
 const helper = require('./test_helper')
 
 const api = supertest(app)
+const auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjExMjU4NWQzZDg3NDc1ZGEyMTJhNWM0IiwiaWF0IjoxNjI4NjAzNDA5fQ.qH2ifJzg8ACfAcnNDVkHrXVs-TySkv4LifY7znqjNVY'
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -21,7 +22,7 @@ describe('returning blogs', () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
-  test('blog id is named id not _id', async () => {
+  test('blog id is named "id" not "_id"', async () => {
     const response = await api.get('/api/blogs')
 
     expect(response.body[0].id).toBeDefined()
@@ -65,11 +66,13 @@ describe('posting blogs', () => {
 })
 
 describe('deleting blogs', () => {
-  test('valid id deltes blog with code 204', async () => {
+  test('valid id deletes blog with code 204', async () => {
     const allBlogsAtStart = await helper.blogsInDb()
     const toBeDeletedId = allBlogsAtStart[0].id
+
     await api
       .delete(`/api/blogs/${toBeDeletedId}`)
+      .set({ 'Authorization': auth })
       .expect(204)
 
     const allBlogsAtEnd = await helper.blogsInDb()

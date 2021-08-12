@@ -12,25 +12,6 @@ blogsRouter.get('/', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// blogsRouter.post('/', (request, response, next) => {
-//   const body = request.body
-//   User
-//     .findOne({})
-//     .then(user => {
-//       const blog = new Blog({
-//         title: body.title,
-//         author: body.author,
-//         url: body.url,
-//         likes: !body.likes ? 0 : body.likes,
-//         user
-//       })
-//       return blog
-//     })
-//     .then(result => { return result.save() })
-//     .then(result => { return response.status(201).json(result) })
-//     .catch(error => next(error))
-// })
-
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
@@ -57,13 +38,15 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog.toJSON())
 })
 
-blogsRouter.delete('/:id', (request, response, next) => {
-  Blog
-    .findByIdAndRemove(request.params.id)
-    .then(result => {
-      response.status(204).json(result)
-    })
-    .catch(error => next(error))
+blogsRouter.delete('/:id', async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const blogToDelete = await Blog.findById(request.params.id)
+
+  if (blogToDelete && blogToDelete.user.toString() !== decodedToken.id.toString()) {
+    return response.status(401).json({ error: 'users can only delete their blogs' })
+  }
+  await Blog.findByIdAndRemove(request.params.id)
+  return response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response, next) => {
