@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', (request, response, next) => {
   Blog
@@ -10,7 +11,7 @@ blogsRouter.get('/', (request, response, next) => {
     .catch(error => next(error))
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const user = request.user
 
@@ -32,7 +33,7 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog.toJSON())
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
   if (blogToDelete && blogToDelete.user.toString() !== request.user.id.toString()) {
     return response.status(401).json({ error: 'users can only delete their blogs' })
@@ -41,7 +42,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   return response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response, next) => {
+blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const body = request.body
   const blog = {
     title: body.title,
@@ -49,12 +50,8 @@ blogsRouter.put('/:id', async (request, response, next) => {
     url: body.url,
     likes: body.likes
   }
-  try {
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog)
-    response.json(updatedBlog)
-  } catch(error) {
-    next(error)
-  }
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog)
+  response.json(updatedBlog)
 })
 
 module.exports = blogsRouter

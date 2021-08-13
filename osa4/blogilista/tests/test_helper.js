@@ -40,19 +40,14 @@ const blogWithoutTitleAndUrl = {
   author: 'Im no writer'
 }
 
-const testUser = new User({
-  username: 'tester',
-  password: 'password1'
-})
-
-const getUserAuth = async () => {
+const getUserToken = async () => {
   const user = await User.findOne({})
   const userInf = {
     username: user.username,
     id: user.id
   }
-  const auth = `Bearer ${jwt.sign(userInf, process.env.SECRET)}`
-  return auth
+  const token = `Bearer ${jwt.sign(userInf, process.env.SECRET)}`
+  return token
 }
 
 const blogsInDb = async () => {
@@ -60,12 +55,19 @@ const blogsInDb = async () => {
   return blogs.map(b => b.toJSON())
 }
 
+const nonexistingId = async () => {
+  const blog = new Blog({ author: 'test', url: 'test', title: 'test' })
+  await blog.save()
+  await blog.remove()
+  return blog.id
+}
+
 module.exports = {
   initialBlogs,
   newBlog,
   blogWithoutLikes,
   blogWithoutTitleAndUrl,
-  testUser,
-  getUserAuth,
-  blogsInDb
+  getUserToken,
+  blogsInDb,
+  nonexistingId
 }

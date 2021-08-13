@@ -9,11 +9,16 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await User.deleteMany({})
-
-  const user = await helper.testUser.save()
-  helper.initialBlogs.forEach(b => b.user = user.id)
-
   await Blog.deleteMany({})
+
+  const testUser = new User({
+    username: 'tester',
+    password: 'password1'
+  })
+  const user = await testUser.save()
+
+  // testuser id needs to be 'manually' mapped to blogs as they are put directly into the db and not through blogs controller
+  helper.initialBlogs.forEach(b => b.user = user.id)
   await Blog.insertMany(helper.initialBlogs)
 })
 
@@ -28,16 +33,28 @@ describe('returning blogs', () => {
   })
 
   test('blog id is named "id" not "_id"', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
 
     expect(response.body[0].id).toBeDefined()
   })
 })
 
 describe('posting blogs', () => {
-  test('blog added to db', async () => {
+  test('bad token return error code 401', async () => {
+    const badToken = 'Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua'
     await api
       .post('/api/blogs')
+      .set({ 'authorization': badToken })
+      .send(helper.newBlog)
+      .expect(401)
+  })
+
+  test('blog added to db', async () => {
+    const token = await helper.getUserToken()
+    await api
+      .post('/api/blogs')
+      .set({ 'authorization': token })
       .send(helper.newBlog)
       .expect(201)
 
@@ -49,8 +66,10 @@ describe('posting blogs', () => {
   })
 
   test('blog without likes values gives blog zero likes', async () => {
+    const token = await helper.getUserToken()
     await api
       .post('/api/blogs')
+      .set({ 'authorization': token })
       .send(helper.blogWithoutLikes)
       .expect(201)
 
@@ -60,8 +79,10 @@ describe('posting blogs', () => {
   })
 
   test('blog without required content fails with code 400', async () => {
+    const token = await helper.getUserToken()
     await api
       .post('/api/blogs')
+      .set({ 'authorization': token })
       .send(helper.blogWithoutTitleAndUrl)
       .expect(400)
 
@@ -74,11 +95,11 @@ describe('deleting blogs', () => {
   test('valid id deletes blog with code 204', async () => {
     const allBlogsAtStart = await helper.blogsInDb()
     const toBeDeletedId = allBlogsAtStart[0].id
-    const auth = await helper.getUserAuth()
+    const token = await helper.getUserToken()
 
     await api
       .delete(`/api/blogs/${toBeDeletedId}`)
-      .set({ 'Authorization': auth })
+      .set({ 'authorization': token })
       .expect(204)
 
     const allBlogsAtEnd = await helper.blogsInDb()
@@ -87,20 +108,43 @@ describe('deleting blogs', () => {
     const deletedBlog = allBlogsAtEnd.find(b => b.id === toBeDeletedId)
     expect(deletedBlog).toEqual(undefined)
   })
+
+  test('bad id doesnt delete blog', async () => {
+    const allBlogsAtStart = await helper.blogsInDb()
+    const toBeDeletedId = allBlogsAtStart[0].id
+
+    const token = await helper.getUserToken()
+    const badId = await helper.nonexistingId()
+
+    await api
+      .delete(`/api/blogs/${badId}`)
+      .set({ 'authorization': token })
+      .expect(204)
+
+    const allBlogsAtEnd = await helper.blogsInDb()
+    expect(allBlogsAtEnd).toHaveLength(allBlogsAtStart.length)
+
+    const deletedBlog = allBlogsAtEnd.find(b => b.id === toBeDeletedId)
+    expect(deletedBlog).toBeDefined()
+  })
 })
 
 describe('editing blogs', () => {
   test('editing likes changes its value', async () => {
     const allBlogsAtStart = await helper.blogsInDb()
     const blogToBeEdited = allBlogsAtStart[0]
+    const token = await helper.getUserToken()
+
     const editedBlog = {
       title: blogToBeEdited.title,
-      author: blogToBeEdited.author,
+      tokenor: blogToBeEdited.tokenor,
       url: blogToBeEdited.url,
       likes: blogToBeEdited.likes + 1
     }
+
     await api
       .put(`/api/blogs/${blogToBeEdited.id}`)
+      .set({ 'authorization': token })
       .send(editedBlog)
 
     const allBlogsAtEnd = await helper.blogsInDb()
@@ -108,6 +152,7 @@ describe('editing blogs', () => {
     expect(editedBlogAtEnd.likes).toBe(editedBlog.likes)
   })
 })
+
 
 afterAll(() => {
   mongoose.connection.close()
