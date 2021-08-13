@@ -2,12 +2,17 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const api = supertest(app)
-const auth = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjExMjU4NWQzZDg3NDc1ZGEyMTJhNWM0IiwiaWF0IjoxNjI4NjAzNDA5fQ.qH2ifJzg8ACfAcnNDVkHrXVs-TySkv4LifY7znqjNVY'
 
 beforeEach(async () => {
+  await User.deleteMany({})
+
+  const user = await helper.testUser.save()
+  helper.initialBlogs.forEach(b => b.user = user.id)
+
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
 })
@@ -69,6 +74,7 @@ describe('deleting blogs', () => {
   test('valid id deletes blog with code 204', async () => {
     const allBlogsAtStart = await helper.blogsInDb()
     const toBeDeletedId = allBlogsAtStart[0].id
+    const auth = await helper.getUserAuth()
 
     await api
       .delete(`/api/blogs/${toBeDeletedId}`)
