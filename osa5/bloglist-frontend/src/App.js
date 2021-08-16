@@ -8,6 +8,7 @@ const App = () => {
   const [username, setUsername] = useState('tester')
   const [password, setPassword] = useState('password1')
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -36,11 +37,12 @@ const App = () => {
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       setUser(user)
       blogService.setToken(user.token)
+      createMessage(true, `${user.username} logged in`)
       setUsername('')
       setPassword('')
     } catch(exeption) {
       console.log(exeption)
-      window.alert('password or username is incorrect')
+      createMessage(false, 'password or username is incorrect')
     }
   }
 
@@ -48,8 +50,20 @@ const App = () => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBloglistUser')
     setUser(null)
+    createMessage(true, `${user.username} logged out`)
     setUsername('')
     setPassword('')
+  }
+
+  const createMessage = (positive, text) => {
+    const newMessage = {
+      positive,
+      text
+    }
+    setMessage(newMessage)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const addBlog = (event) => {
@@ -59,13 +73,20 @@ const App = () => {
       author,
       url
     }
-    blogService.postBlog(blogObject)
+    try {
+      blogService.postBlog(blogObject)
+      createMessage(true, 'New blog created')
+    } catch(exeption) {
+      console.log(exeption)
+      createMessage(false, 'Creating blog failed')
+    }
   }
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
+        {message !== null && <Notification message={message} />}
         <form onSubmit={e => handleLogin(e)}>
           <div>
             username
@@ -93,6 +114,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {message !== null && <Notification message={message} />}
       <p>{user.username} logged on
         <button onClick={handleLogout}>logout</button>
       </p>
@@ -134,5 +156,21 @@ const App = () => {
   )
 }
 
+const messageStyle = {
+  color: 'blue',
+  backround: 'lightgrey',
+  borderStyle: 'solid',
+  padding: 10,
+  fontStyle: 'cursive',
+  fontSize: 20,
+}
+const positiveMessageStyle = { ... messageStyle, color: 'green' }
+const negativeMessageStyle = { ... messageStyle, color: 'red' }
+
+const Notification = (message) => {
+  return <div style={message.message.positive ? positiveMessageStyle : negativeMessageStyle}>
+    {message.message.text}
+  </div>
+}
 
 export default App
