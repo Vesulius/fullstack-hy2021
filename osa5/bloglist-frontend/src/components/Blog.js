@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import blogService from '../services/blogs'
 
-const Blog = blog => {
+const Blog = ({ blog }) => {
   const [hide, setHide] = useState(true)
+  const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -9,6 +11,15 @@ const Blog = blog => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
+  }
+
+  const handleLike = async () => {
+    try {
+      await blogService.like(blog)
+      setLikes(likes + 1)
+    } catch(exeption) {
+      console.log(exeption)
+    }
   }
 
   const toggleHide = () => {
@@ -21,9 +32,9 @@ const Blog = blog => {
     return (
       <div>
         {blog.url}<br></br>
-        {blog.likes}
-        <button>like</button><br></br>
-        {blog.user}
+        {likes}
+        <button onClick={handleLike}>like</button><br></br>
+        {blog.user.name}
       </div>
     )
   }
