@@ -41,18 +41,16 @@ const App = () => {
   }
 
   const showBlogs = () => {
-    if (user) {
-      return (
-        <>
-          <Togglable buttonLabel='create'>
-            <BlogForm createMessage={createMessage}/>
-          </Togglable>
-          {blogs.map(blog =>
-            <Blog key={blog.id} title={blog.title} author={blog.author} />
-          )}
-        </>
-      )
-    }
+    return (
+      <>
+        <Togglable showButtonLabel='create' hideButtonLabel='cancel'>
+          <BlogForm createMessage={createMessage}/>
+        </Togglable>
+        {blogs.map(blog =>
+          <Blog key={blog.id} title={blog.title} author={blog.author} url={blog.url} likes={blog.likes} user={blog.user.name} />
+        )}
+      </>
+    )
   }
 
   return (
@@ -60,7 +58,7 @@ const App = () => {
       <h2>blogs</h2>
       {message !== null && <Notification message={message} />}
       <LoginForm user={user} setUser={setUser} createMessage={createMessage} />
-      {showBlogs()}
+      {user !== null && showBlogs()}
     </div>
   )
 }
