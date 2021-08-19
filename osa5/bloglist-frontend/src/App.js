@@ -11,6 +11,17 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
+  const [change, setChange] = useState(false)
+
+  if (change) {
+    const newBlogs = blogs
+      .filter(b => b.id !== null)
+      .sort((blog1, blog2) => {
+        return blog2.likes - blog1.likes
+      })
+    setBlogs(newBlogs)
+    setChange(false)
+  }
 
   useEffect(() => {
     blogService
@@ -46,10 +57,8 @@ const App = () => {
         <Togglable showButtonLabel='create' hideButtonLabel='cancel'>
           <BlogForm createMessage={createMessage}/>
         </Togglable>
-        {blogs.sort((blog1, blog2) => {
-          return blog2.likes - blog1.likes
-        }).map(blog =>
-          <Blog key={blog.id} blog={blog} />
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} setChange={setChange} />
         )}
       </>
     )
