@@ -16,6 +16,7 @@ const Blog = ({ blog }) => {
   const handleLike = async () => {
     try {
       await blogService.like(blog)
+      blog.likes = blog.likes + 1
       setLikes(likes + 1)
     } catch(exeption) {
       console.log(exeption)
@@ -35,6 +36,7 @@ const Blog = ({ blog }) => {
         {likes}
         <button onClick={handleLike}>like</button><br></br>
         {blog.user.name}
+        <button onClick={() => console.log('deleted')}>remove</button>
       </div>
     )
   }

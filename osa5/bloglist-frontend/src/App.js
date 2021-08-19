@@ -24,8 +24,8 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
       blogService.setToken(user.token)
+      setUser(user)
     }
   }, [])
 
@@ -46,7 +46,9 @@ const App = () => {
         <Togglable showButtonLabel='create' hideButtonLabel='cancel'>
           <BlogForm createMessage={createMessage}/>
         </Togglable>
-        {blogs.map(blog =>
+        {blogs.sort((blog1, blog2) => {
+          return blog2.likes - blog1.likes
+        }).map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
       </>
@@ -58,7 +60,7 @@ const App = () => {
       <h2>blogs</h2>
       {message !== null && <Notification message={message} />}
       <LoginForm user={user} setUser={setUser} createMessage={createMessage} />
-      {user !== null && showBlogs()}
+      { user !== null && showBlogs()}
     </div>
   )
 }

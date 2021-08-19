@@ -2,9 +2,12 @@ import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import loginService from '../services/login'
 
-const LoginForm = ({ user, setUser, createMessage }) => {
+
+
+const LoginForm = ( { user, setUser, createMessage } ) => {
   const [username, setUsername] = useState('tester')
   const [password, setPassword] = useState('password1')
+
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBloglistUser')
@@ -63,5 +66,4 @@ const LoginForm = ({ user, setUser, createMessage }) => {
     </div>
   )
 }
-
 export default LoginForm
