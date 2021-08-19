@@ -3,7 +3,6 @@ import blogService from '../services/blogs'
 import loginService from '../services/login'
 
 
-
 const LoginForm = ( { user, setUser, createMessage } ) => {
   const [username, setUsername] = useState('tester')
   const [password, setPassword] = useState('password1')
