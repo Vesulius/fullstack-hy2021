@@ -46,7 +46,7 @@ const Blog = ({ blog, setChange }) => {
     return (
       <div>
         {blog.url}<br></br>
-        {likes}
+        likes {likes}
         <button onClick={handleLike}>like</button><br></br>
         {blog.user.name}
         <button onClick={handleRemove}>remove</button>
