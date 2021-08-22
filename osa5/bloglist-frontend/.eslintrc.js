@@ -5,7 +5,8 @@ module.exports = {
     'commonjs': true,
     'browser': true,
     'es2021': true,
-    'jest': true
+    'jest': true,
+    'cypress/globals': true
   },
   'extends': [
     'eslint:recommended',
@@ -18,6 +19,9 @@ module.exports = {
     'sourceType': 'module',
     'ecmaVersion': 12
   },
+  'plugins': [
+    'react', 'jest', 'cypress'
+  ],
   'rules': {
     'indent': [
       'error',

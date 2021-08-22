@@ -6,9 +6,9 @@ import Blog from './Blog'
 describe('<Blog />', () => {
 
   let component
+  let mockLikeHandler
 
   beforeEach(() => {
-
     const user = {
       id: 'test_id',
       name: 'test_name',
@@ -22,12 +22,11 @@ describe('<Blog />', () => {
       user
     }
 
-    const mocFunc = () => {
-      console.log('tested')
-    }
+    const mockChangeHandler = jest.fn()
+    mockLikeHandler = jest.fn()
 
     component = render(
-      <Blog blog={blog} setChange={mocFunc} />
+      <Blog blog={blog} setChange={mockChangeHandler} handleLike={mockLikeHandler} />
     )
   })
 
@@ -53,5 +52,16 @@ describe('<Blog />', () => {
     expect(component.container).toHaveTextContent(
       'likes'
     )
+  })
+
+  test('clicking like button twice calls eventHandler twice', () => {
+    const showButton = component.getByText('show')
+    fireEvent.click(showButton)
+
+    const likeButton = component.getByText('like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(2)
   })
 })

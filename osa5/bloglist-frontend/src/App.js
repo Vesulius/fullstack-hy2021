@@ -40,6 +40,18 @@ const App = () => {
     }
   }, [])
 
+  // This function was originally inside blog component but was moved here because exercise 5.15
+  const handleLike = async ({ blog, likes, setLikes }) => {
+    try {
+      await blogService.like(blog)
+      blog.likes = blog.likes + 1
+      setLikes(likes + 1)
+      setChange(true)
+    } catch(exeption) {
+      console.log(exeption)
+    }
+  }
+
   const createMessage = (positive, text) => {
     const newMessage = {
       positive,
@@ -58,7 +70,7 @@ const App = () => {
           <BlogForm createMessage={createMessage}/>
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} setChange={setChange} />
+          <Blog key={blog.id} blog={blog} setChange={setChange} handleLike={handleLike} />
         )}
       </>
     )
