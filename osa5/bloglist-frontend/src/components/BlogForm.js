@@ -1,34 +1,20 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const BlogForm = (messager) => {
+const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title,
-      author,
-      url
-    }
-    try {
-      await blogService.postBlog(blogObject)
-      messager.createMessage(true, 'New blog created')
-    } catch(exeption) {
-      console.log(exeption)
-      messager.createMessage(false, 'Creating blog failed')
-    }
-  }
+
 
   return (
     <div className='formDiv'>
       <h2>create new</h2>
-      <form onSubmit={addBlog}>
+      <form onSubmit={() => addBlog(title, author, url)}>
         <div>
             title:
           <input
+            id="title"
             type="text"
             value={title}
             name="title"
@@ -38,6 +24,7 @@ const BlogForm = (messager) => {
         <div>
             author:
           <input
+            id="author"
             type="text"
             value={author}
             name="author"
@@ -47,6 +34,7 @@ const BlogForm = (messager) => {
         <div>
             url:
           <input
+            id="url"
             type="text"
             value={url}
             name="title"

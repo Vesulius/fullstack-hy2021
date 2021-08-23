@@ -40,7 +40,6 @@ const App = () => {
     }
   }, [])
 
-  // This function was originally inside blog component but was moved here because exercise 5.15
   const handleLike = async ({ blog, likes, setLikes }) => {
     try {
       await blogService.like(blog)
@@ -49,6 +48,22 @@ const App = () => {
       setChange(true)
     } catch(exeption) {
       console.log(exeption)
+    }
+  }
+
+  const addBlog = async ({ event, title, author, url }) => {
+    event.preventDefault()
+    const blogObject = {
+      title,
+      author,
+      url
+    }
+    try {
+      await blogService.postBlog(blogObject)
+      createMessage(true, 'New blog created')
+    } catch(exeption) {
+      console.log(exeption)
+      createMessage(false, 'Creating blog failed')
     }
   }
 
@@ -67,7 +82,7 @@ const App = () => {
     return (
       <>
         <Togglable showButtonLabel='create' hideButtonLabel='cancel'>
-          <BlogForm createMessage={createMessage}/>
+          <BlogForm addBlog={addBlog}/>
         </Togglable>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} setChange={setChange} handleLike={handleLike} />

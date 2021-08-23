@@ -15,6 +15,7 @@ describe('<Blog />', () => {
       username: 'test_username'
     }
     const blog = {
+      id: '1234',
       title: 'test_title',
       author: 'test_author',
       url: 'test_url',

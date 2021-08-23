@@ -49,7 +49,6 @@ const Blog = ({ blog, setChange, handleLike }) => {
       <button onClick={toggleHide}>{buttonLabel}</button>
       {!hide && info()}
     </div>
-
   )
 }
 
