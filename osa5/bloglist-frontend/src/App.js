@@ -113,7 +113,7 @@ const positiveMessageStyle = { ... messageStyle, color: 'green' }
 const negativeMessageStyle = { ... messageStyle, color: 'red' }
 
 const Notification = (message) => {
-  return <div style={message.message.positive ? positiveMessageStyle : negativeMessageStyle}>
+  return <div className="notification" style={message.message.positive ? positiveMessageStyle : negativeMessageStyle}>
     {message.message.text}
   </div>
 }
