@@ -93,7 +93,7 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      { user !== null && <h2>Blogs</h2>}
       {message !== null && <Notification message={message} />}
       <LoginForm user={user} setUser={setUser} createMessage={createMessage} />
       { user !== null && showBlogs()}

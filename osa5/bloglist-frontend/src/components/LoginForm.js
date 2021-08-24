@@ -4,8 +4,8 @@ import loginService from '../services/login'
 
 
 const LoginForm = ( { user, setUser, createMessage } ) => {
-  const [username, setUsername] = useState('tester')
-  const [password, setPassword] = useState('password1')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -41,10 +41,11 @@ const LoginForm = ( { user, setUser, createMessage } ) => {
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={e => handleLogin(e)}>
+      <form id="login-form" onSubmit={event => handleLogin(event)}>
         <div>
             username
           <input
+            id="username"
             type="text"
             value={username}
             name="Username"
@@ -54,6 +55,7 @@ const LoginForm = ( { user, setUser, createMessage } ) => {
         <div>
             password
           <input
+            id="password"
             type="password"
             value={password}
             name="Password"
