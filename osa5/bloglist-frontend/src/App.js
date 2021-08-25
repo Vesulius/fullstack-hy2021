@@ -19,6 +19,7 @@ const App = () => {
       .sort((blog1, blog2) => {
         return blog2.likes - blog1.likes
       })
+    console.log(newBlogs)
     setBlogs(newBlogs)
     setChange(false)
   }
@@ -59,7 +60,9 @@ const App = () => {
       url
     }
     try {
-      await blogService.postBlog(blogObject)
+      createMessage(true, 'New blog created')
+      const response = await blogService.postBlog(blogObject)
+      setBlogs(blogs.concat(response.data))
       createMessage(true, 'New blog created')
     } catch(exeption) {
       console.log(exeption)

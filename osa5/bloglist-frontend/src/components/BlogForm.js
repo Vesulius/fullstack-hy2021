@@ -5,12 +5,10 @@ const BlogForm = ({ addBlog }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-
-
   return (
     <div className='formDiv'>
       <h2>create new</h2>
-      <form onSubmit={() => addBlog(title, author, url)}>
+      <form onSubmit={event => addBlog({ event, title, author, url })}>
         <div>
             title:
           <input
@@ -41,7 +39,7 @@ const BlogForm = ({ addBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit">create</button>
+        <button id="submit" type="submit">create</button>
       </form>
     </div>
   )

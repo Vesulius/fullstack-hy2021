@@ -33,4 +33,26 @@ describe('Blog app', function() {
       cy.get('.notification').should('have.css', 'color', 'rgb(255, 0, 0)')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.request('POST', 'http://localhost:3003/api/login', {
+        username: 'tester',
+        password: 'password1'
+      }).then(response => {
+        localStorage.setItem('loggedBloglistUser', JSON.stringify(response.body))
+      })
+      cy.visit('http://localhost:3000')
+    })
+
+    it('A blog can be created', function() {
+      cy.get('#open').click()
+      cy.get('#title').type('testers_guide_to_testing')
+      cy.get('#author').type('tester')
+      cy.get('#url').type('itssabook')
+      cy.get('#submit').click()
+      cy.contains('New blog created')
+      cy.contains('testers_guide_to_testing')
+    })
+  })
 })
