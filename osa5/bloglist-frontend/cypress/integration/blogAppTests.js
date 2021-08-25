@@ -54,5 +54,39 @@ describe('Blog app', function() {
       cy.contains('New blog created')
       cy.contains('testers_guide_to_testing')
     })
+
+    describe('blogs can be manipulated', function() {
+      beforeEach(function() {
+        const blogs = [
+          {
+            title: 'title1',
+            author: 'author1',
+            url: 'url1'
+          },
+          {
+            title: 'title2',
+            author: 'author2',
+            url: 'url2'
+          },
+          {
+            title: 'title3',
+            author: 'author3',
+            url: 'url3'
+          },
+        ]
+        cy.postBlog(blogs[0])
+        cy.postBlog(blogs[1])
+        cy.postBlog(blogs[2])
+        cy.visit('http://localhost:3000')
+        cy.reload()
+      })
+
+      it.only('liking blog increses likes', function() {
+        cy.get('#toggle').click()
+        cy.get('#likes').should('contain', '0')
+        cy.get('#like').click()
+        cy.get('#likes').should('contain', '1')
+      })
+    })
   })
 })

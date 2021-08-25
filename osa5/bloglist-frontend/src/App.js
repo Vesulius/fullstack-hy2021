@@ -19,7 +19,6 @@ const App = () => {
       .sort((blog1, blog2) => {
         return blog2.likes - blog1.likes
       })
-    console.log(newBlogs)
     setBlogs(newBlogs)
     setChange(false)
   }
