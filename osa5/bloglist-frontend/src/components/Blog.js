@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import propTypes from 'prop-types'
 
-const Blog = ({ blog, setChange, handleLike }) => {
+const Blog = ({ blog, setChange, handleLike, createMessage }) => {
   const [hide, setHide] = useState(true)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -19,8 +19,10 @@ const Blog = ({ blog, setChange, handleLike }) => {
     try {
       await blogService.remove(blog.id)
       blog.id = null
+      createMessage(true, `Blog ${blog.title} removed`)
       setChange(true)
     } catch(exeption) {
+      createMessage(true, 'Blogs can only be removed by their posters')
       console.log(exeption)
     }
   }

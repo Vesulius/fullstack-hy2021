@@ -81,12 +81,22 @@ describe('Blog app', function() {
         cy.reload()
       })
 
-      it.only('liking blog increses likes', function() {
+      it('liking blog increses likes', function() {
         cy.get('#toggle').click()
         cy.get('#likes').should('contain', '0')
         cy.get('#like').click()
         cy.get('#likes').should('contain', '1')
       })
+
+      it('blog poster can delete it', function() {
+        cy.get('#toggle').click()
+        cy.get('#remove').click()
+        cy.contains('Blog title1 removed')
+      })
+
+      // it.only('blogs are in the order of likes', function() {
+      //   cy.
+      // })
     })
   })
 })
