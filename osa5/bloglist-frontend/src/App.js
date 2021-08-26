@@ -28,6 +28,7 @@ const App = () => {
       .getAll()
       .then(blogs => {
         setBlogs(blogs)
+        setChange(true)
       })
   }, [])
 
@@ -86,9 +87,12 @@ const App = () => {
         <Togglable showButtonLabel='create' hideButtonLabel='cancel'>
           <BlogForm addBlog={addBlog}/>
         </Togglable>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} setChange={setChange} handleLike={handleLike} createMessage={createMessage} />
-        )}
+        <div id='blog-list'>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} setChange={setChange} handleLike={handleLike} createMessage={createMessage} />
+          )}
+        </div>
+
       </>
     )
   }

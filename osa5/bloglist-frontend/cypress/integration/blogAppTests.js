@@ -57,26 +57,12 @@ describe('Blog app', function() {
 
     describe('blogs can be manipulated', function() {
       beforeEach(function() {
-        const blogs = [
-          {
-            title: 'title1',
-            author: 'author1',
-            url: 'url1'
-          },
-          {
-            title: 'title2',
-            author: 'author2',
-            url: 'url2'
-          },
-          {
-            title: 'title3',
-            author: 'author3',
-            url: 'url3'
-          },
-        ]
-        cy.postBlog(blogs[0])
-        cy.postBlog(blogs[1])
-        cy.postBlog(blogs[2])
+        const blog = {
+          title: 'title1',
+          author: 'author1',
+          url: 'url1'
+        }
+        cy.postBlog(blog)
         cy.visit('http://localhost:3000')
         cy.reload()
       })
@@ -94,9 +80,52 @@ describe('Blog app', function() {
         cy.contains('Blog title1 removed')
       })
 
-      // it.only('blogs are in the order of likes', function() {
-      //   cy.
-      // })
+      it('blogs are in the order of likes', function() {
+        const blogs = [
+          {
+            title: 'title2',
+            author: 'author2',
+            url: 'url2',
+            likes: 1
+          },
+          {
+            title: 'title3',
+            author: 'author3',
+            url: 'url3',
+            likes: 2
+          },
+        ]
+        cy.postBlog(blogs[0])
+        cy.postBlog(blogs[1])
+        cy.visit('http://localhost:3000')
+        cy.reload()
+
+        cy.get('#blog-list')
+          .children()
+          .then(blogs => {
+            cy.get(blogs[0]).contains('title3')
+            cy.get(blogs[1]).contains('title2')
+            cy.get(blogs[2]).contains('title1')
+          })
+
+        cy.contains('title1').find('#toggle').click()
+        cy.get('#like').click()
+        cy.get('#likes', { timeout: 1000 }).contains(1)
+        cy.get('#like').click()
+        cy.get('#likes', { timeout: 1000 }).contains(2)
+        cy.get('#like').click()
+        cy.get('#likes', { timeout: 1000 }).contains(3)
+
+        cy.get('#blog-list').children(':first').contains('title1')
+
+        cy.get('#blog-list')
+          .children()
+          .then(blogs => {
+            cy.get(blogs[0]).contains('title1')
+            cy.get(blogs[1]).contains('title3')
+            cy.get(blogs[2]).contains('title2')
+          })
+      })
     })
   })
 })

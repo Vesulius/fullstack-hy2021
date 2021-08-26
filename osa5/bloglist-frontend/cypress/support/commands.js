@@ -31,7 +31,8 @@ Cypress.Commands.add('postBlog', ( blog ) => {
     body: {
       title: blog.title,
       author: blog.author,
-      url: blog.url
+      url: blog.url,
+      likes: blog.likes ? blog.likes : 0
     },
     headers: {
       'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedBloglistUser')).token}`
