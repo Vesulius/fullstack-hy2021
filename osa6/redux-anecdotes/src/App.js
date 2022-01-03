@@ -7,9 +7,9 @@ import Notification from './components/Notification'
 const App = () => {
   return (
     <div>
+      <Notification />
       <AnecdoteList />
       <AnecdoteForm />
-      <Notification />
     </div>
   )
 }
