@@ -10,7 +10,6 @@ import { initializeAnecdotes } from './reducers/anecdoteReducer'
 const App = () => {
   const dispatch = useDispatch()
   useEffect(() => {
-    console.log('tämä3');
     dispatch(initializeAnecdotes())
   }, [dispatch])
 
