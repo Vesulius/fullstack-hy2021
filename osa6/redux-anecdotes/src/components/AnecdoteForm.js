@@ -13,7 +13,7 @@ const AnecdoteForm = () => {
         dispatch(setNotification(`You added \'${content}\'`))
         setTimeout(() => {
             dispatch(disableNotification())
-        }, 3000)
+        }, 5000)
     }
 
     return (
