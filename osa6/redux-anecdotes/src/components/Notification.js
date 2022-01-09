@@ -2,8 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 const Notification = props => {
-  // const notification = useSelector(state => state.notification)
-
   const visible = {
     border: 'solid',
     padding: 10,
@@ -14,9 +12,10 @@ const Notification = props => {
     display: null
   }
 
-  const style = props.notification ? visible : disabled
+  const style = props.notification ? visible : null
+  const text = props.notification ? props.notification[0] : ""
 
-  return <div style={style}>{props.notification}</div>
+  return <div style={style}>{text}</div>
 }
 
 const mapStateToProps = state => {

@@ -1,7 +1,10 @@
 const notificationReducer = (state = null, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
-      return action.content
+      if (state !== null) {
+        clearTimeout(state[1])
+      }
+      return [action.content, action.timeoutCode]
     case 'DISABLE_NOTIFICATION':
       return null
     default:
@@ -10,13 +13,13 @@ const notificationReducer = (state = null, action) => {
 }
 
 export const setNotification = (content, time) => {
-  return async dispatch => {
+  return dispatch => {
+    const timeoutCode = setTimeout(() => dispatch(disableNotification()), time * 1000)
     dispatch({
       type: 'SET_NOTIFICATION',
-      content
+      content,
+      timeoutCode
     })
-    await new Promise(resolve => setTimeout(resolve, time * 1000))
-    dispatch(disableNotification())
   }
 }
 

@@ -3,7 +3,6 @@ import { addAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteForm = props => {
-  // const dispatch = useDispatch()
 
   const add = event => {
     event.preventDefault()
