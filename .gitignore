@@ -1,6 +1,4 @@
 osa1/part1
-osa1/kurssitiedot/node_modules
 testaus/
-osa2/puhelinluettelo/.prettierrc
-osa4/blogilista/.env
-osa4/blogilista/node_modules
+*/*/node_modules
+*/*/.env
