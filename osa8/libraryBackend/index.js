@@ -98,6 +98,11 @@ const resolvers = {
             ],
           },
         },
+        {
+          $addFields: {
+            id: { $toObjectId: "$_id" },
+          },
+        }
       ])
       return books
     },
@@ -120,15 +125,15 @@ const resolvers = {
         { $unwind: "$author" },
         {
           $match: {
-            "author.name": root.name
-          }
+            "author.name": root.name,
+          },
         },
         {
-          $count: "bookCount"
+          $count: "bookCount",
         },
       ])
       return count[0].bookCount
-    }
+    },
   },
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
