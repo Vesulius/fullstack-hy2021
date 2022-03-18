@@ -1,28 +1,25 @@
-import { useQuery } from "@apollo/client"
-import { useState } from "react"
+import { useLazyQuery } from "@apollo/client"
+import { useEffect, useState } from "react"
 import { ALL_BOOKS } from "../queries"
 
 const Books = (props) => {
-  const [genre, setGenre] = useState("")
-  const result = useQuery(ALL_BOOKS)
-  if (!props.show || !result.data) {
-    return null
-  }
-  const allBooks = result.data.allBooks
+  const [genre, setGenre] = useState(null)
+  const [allGenres, setAllGenres] = useState([])
+  const [result, {loading, data}] = useLazyQuery(ALL_BOOKS)
 
-  const books = () => {
-    if (genre === "") {
-      return allBooks
+  useEffect(() => result({
+    variables: { genre },
+  }), [genre]) // eslint-disable-line
+
+  useEffect(() => {
+    if (data) {
+      const newGenres = data.allBooks.map(b => b.genres).flat()
+      setAllGenres([...new Set((allGenres.concat(newGenres)))])
     }
-    const filtered = allBooks.filter(b => b.genres.some(g => g === genre))
-    return filtered
-  }
-
-  const allGenres = () => {
-    const genres = allBooks
-      .map((b) => b.genres)
-      .flat()
-    return [...new Set(genres)]
+  }, [data])
+  
+  if (!props.show || loading || !data) {
+    return null
   }
 
   const selected = (buttonGenre) => {
@@ -34,7 +31,7 @@ const Books = (props) => {
 
   const buttonAction = (buttonGenre) => {
     if (genre === buttonGenre) {
-      setGenre("")
+      setGenre(null)
     } else {
       setGenre(buttonGenre)
     }
@@ -51,7 +48,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books().map((a) => (
+          {data.allBooks.map((a) => (
             <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -61,7 +58,7 @@ const Books = (props) => {
         </tbody>
       </table>
       <div>
-        {allGenres().map((g) => (
+        {allGenres.map((g) => (
           <button key={g} style={selected(g)} onClick={() => buttonAction(g)}>
             {g}
           </button>

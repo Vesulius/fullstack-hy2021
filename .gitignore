@@ -1,4 +1,4 @@
 osa1/part1
 testaus/
-*/*/node_modules
-*/*/.env
+.env
+node_modules
