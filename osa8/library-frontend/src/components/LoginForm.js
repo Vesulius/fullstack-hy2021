@@ -13,11 +13,11 @@ const LoginForm = ({ show, setToken }) => {
       setToken(token)
       localStorage.setItem("library-user-token", token)
     }
-  }, [result]) // eslint-disable-line
+  }, [result.data]) // eslint-disable-line
 
   if (!show) return null
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
     try {
       login({ variables: { username, password } })

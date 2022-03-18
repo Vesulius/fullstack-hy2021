@@ -8,7 +8,6 @@ const Books = (props) => {
   if (!props.show || !result.data) {
     return null
   }
-
   const allBooks = result.data.allBooks
 
   const books = () => {
